@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken')
 var router = express.Router();
 
 router.post('/', function (req, res, next) {
-  if (typeof req.body.name === "undefined") {
-    res.status(400).json({ success: false, message: "name is undefined" });
+  if (typeof req.body.phone === "undefined") {
+    res.status(400).json({ success: false, message: "phone is undefined" });
     return;
   }
   if (typeof req.body.password === "undefined") {
@@ -13,11 +13,11 @@ router.post('/', function (req, res, next) {
     return;
   }
   const secret = req.app.get('jwt-secret')
-  userinfo.verifyUser(req.body.name, req.body.password).then(function (result) {
+  userinfo.verifyUser(req.body.phone, req.body.password).then(function (result) {
     req.jwtToken = result.message;
     req.jwtOption = {
       expiresIn: '1d',
-      issuer: 'dujeonglee',
+      issuer: 'CafeBlanc',
       subject: 'userinfo'
     };
     next();

@@ -15,6 +15,8 @@ var api = require('./routes/api');
 var auth = require('./middlewares/auth');
 auth.key = config.secret;
 
+var userinfo = require('./model/userinfo');
+
 var app = express();
 
 // view engine setup
@@ -32,11 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
-app.use('/users', users);
-
+/** login resource generated web token */
 app.use('/login', login);
 app.use('/login', auth.issueToken);
 
+/** users resource requires web token verification */
+app.use('/users', auth.verifyToken);
+app.use('/users', users);
+
+/** For future use */
 app.use('/api', auth.verifyToken);
 app.use('/api', api);
 
@@ -65,6 +71,8 @@ mongoose.connect(config.mongodbUri, {
     /* other options */
 }).then(function (db) {
     console.log("Connected");
+    /** Create admin account on connection */
+    userinfo.createAdminUser();
 });
 
 module.exports = app;
